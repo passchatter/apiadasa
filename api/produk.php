@@ -98,8 +98,8 @@ if ($method == 'GET') {
 
         if (!empty($category)) {
             $sql .= " AND category_id = ?";
-            $types .= 's';
-            $params[] = $category;
+            $types .= 'i';
+            $params = [(int)$category];
         }
 
         if (!empty($motif)) {
@@ -116,7 +116,7 @@ if ($method == 'GET') {
         }
 
         if (!empty($search)) {
-            $sql .= " AND (name LIKE ? OR deskripsi LIKE ?)";
+            $sql .= " AND (motif LIKE ? OR color LIKE ?)";
             $types .= 'ss';
             $params[] = "%$search%";
             $params[] = "%$search%";
@@ -135,7 +135,7 @@ if ($method == 'GET') {
             $sql_count .= " AND color LIKE ?";
         }
         if (!empty($search)) {
-            $sql_count .= " AND (name LIKE ? OR deskripsi LIKE ?)";
+            $sql_count .= " AND (motif LIKE ? OR color LIKE ?)";
         }
 
         // Query untuk menghitung total produk yang sesuai dengan filter
