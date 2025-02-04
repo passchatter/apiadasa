@@ -3,7 +3,7 @@
 $host = 'localhost';
 $user = 'root';
 $pass = 'root';
-$dbname = 'arifinbatik';
+$dbname = 'adasa';
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

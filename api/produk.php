@@ -54,34 +54,32 @@ if ($method == 'GET') {
         $id_produk = (int)$_GET['id'];
         $sql = "SELECT * FROM produk WHERE id = ?";
         echo execute_query($sql, 'i', [$id_produk]);
-    } elseif ($request === "related") {
-        // Handle endpoint 'related'
-        $category = $_GET['category'] ?? '';
+    }elseif ($request === "related") {
+        // Ambil parameter ID produk dari request
         $id_produk = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
+    
         // Ambil produk dengan ID lebih kecil dari produk saat ini (DESCENDING)
-        $sql1 = "SELECT * FROM produk WHERE category_id = ? AND id < ? ORDER BY id DESC LIMIT 10";
-        $result1 = json_decode(execute_query($sql1, 'si', [$category, $id_produk]), true);
-
+        $sql1 = "SELECT * FROM produk WHERE id < ? ORDER BY id DESC LIMIT 10";
+        $result1 = json_decode(execute_query($sql1, 'i', [$id_produk]), true);
+    
         // Jika hasil kurang dari 10, cari produk tambahan dengan ID lebih besar (ASCENDING)
         if (count($result1) < 10) {
             $limit = 10 - count($result1); // Hitung sisa jumlah produk yang dibutuhkan
-
-            $sql2 = "SELECT * FROM produk WHERE category_id = ? AND id > ? ORDER BY id ASC LIMIT ?";
-            $result2 = json_decode(execute_query($sql2, 'sii', [$category, $id_produk, $limit]), true);
-
+    
+            $sql2 = "SELECT * FROM produk WHERE id > ? ORDER BY id ASC LIMIT ?";
+            $result2 = json_decode(execute_query($sql2, 'ii', [$id_produk, $limit]), true);
+    
             // Gabungkan hasil
             $result1 = array_merge($result1, $result2);
         }
-
+    
         // Filter produk untuk menghapus produk yang sama dengan `id_produk`
         $result1 = array_filter($result1, function ($product) use ($id_produk) {
             return $product['id'] != $id_produk;
         });
-
+    
         // Kembalikan hasil dalam format JSON (reset indeks array)
         echo json_encode(array_values($result1));
-       
     } elseif ($request === 'filter') {
         $category = $_GET['category'] ?? '';
         $motif = $_GET['motif'] ?? '';
